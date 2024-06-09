@@ -1,40 +1,31 @@
 //swapController.js
 const prisma = require('../DBCon/db');
-// const { PrismaClient } = require('@prisma/client');
-// const prisma = new PrismaClient();
-
-
-// async function getSwaps(req, res) {
-//   const swaps = await prisma.swaps.findMany({
-//     where: {
-//       dex: 'uniswap'
-//     }
-//   });
-
-//   res.json(swaps);
-// }
-
-
-//http://localhost:3000/api/swaps?dex=uniswap
-
 
 exports.getSwaps = async (req, res) => {
-  const { dex } = req.query;
-
-  if (!dex) {
-    return res.status(400).json({ error: 'DEX parameter is required' });
-  }
-
   try {
+    console.log(`Request Query: ${JSON.stringify(req.query)}`); // Debugging line
+    let { dex } = req.query;
+    dex = dex.trim(); // Remove whitespace and newline characters
+
+    console.log(`Dex: ${dex}`); // Debugging line
+  
     const swaps = await prisma.swapTransaction.findMany({
-      where: { dex }
+      where: {
+        dex: dex,
+      },
     });
-    res.status(200).json({ swaps });
+  
+    console.log(`Swaps: ${JSON.stringify(swaps)}`); // Debugging line
+  
+    if (!swaps || swaps.length === 0) {
+      return res.status(404).json({ error: 'No swaps found for this dex' });
+    }
+  
+    res.json({ swaps });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 exports.createSwapTransaction = async (req, res) => {
   try {

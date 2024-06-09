@@ -2,7 +2,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const prisma = require('../DBCon/db');
-// require('dotenv').config(); 
+require('dotenv').config(); 
 const { JWT_SECRET } = process.env;
 
 exports.register = async (req, res) => {
